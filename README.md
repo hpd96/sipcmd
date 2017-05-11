@@ -8,7 +8,7 @@ To see what changed from the original repo, please refer to [CHANGELOG.md](CHANG
 ## Description
 
 `sipcmd` is a command line softphone that can originate and accept phone calls, enter DTMF digits and record and play back WAV files.  
-It is meant primarily as testing tool for VoIP systems, and it only runs on Linux.  
+It is meant primarily as testing tool for VoIP systems, it only runs on Linux, and it is in no way stable or production ready.  
 
 ## Requirements
 

@@ -14,5 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Make `README.md` actually markdown, instead of half-baked HTML.
 - Update `README.md` to reflect new build process
 
+### Fixed
+- Fixed Segmentation Fault reported in https://github.com/tmakkonen/sipcmd/issues/28
+
 ### Removed
 - Makefile
