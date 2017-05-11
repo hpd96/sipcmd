@@ -10,10 +10,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
  */
@@ -34,7 +34,7 @@ bool TestChanAudio::PlaybackAudio(const bool raw_rtp) {
 
     //start playback
     playback = true;
-    
+
     if (!raw_rtp) {
       sync.Signal();
       playsync.Wait();
@@ -46,14 +46,14 @@ bool TestChanAudio::PlaybackAudio(const bool raw_rtp) {
       playback = false;
       return !playbackfailed;
     }
-    
+
     Manager *m = TPState::Instance().GetManager();
     // write directly to rtp stream.
     //size_t recordbytes = recordmillisec * BYTES_PER_MILLIS;
-    
+
     PAdaptiveDelay delay;
     int i = 0;
-   
+
     unsigned timestamp = PRandom::Number();
 
     while(true) {
@@ -100,7 +100,7 @@ void TestChanAudio::StopAudioPlayback(bool ioerror) {
 }
 
 void TestChanAudio::StopAudioRecording(bool ioerror) {
-    
+
     std::cout << __func__ << std::endl;
     if(recfile) {
         PFile *ftemp = recfile;
@@ -172,7 +172,7 @@ bool TestChanAudio::PlaybackAudioFile(PString &filename) {
 
     // start playback
     return PlaybackAudio(TPState::Instance().GetProtocol() == TPState::RTP);
-} 
+}
 
 
 void TestChanAudio::FillPlaybackBuffer(char *buf, size_t len) {
@@ -334,7 +334,7 @@ void TestChanAudio::RecordFromBuffer(
 }
 
 bool TestChannel::Close() {
-    cout << __func__ << " [ " << this->connection 
+    cout << __func__ << " [ " << this->connection
 	 << " - " << this <<  " ]" << endl;
     audiohandle.CloseChannel();
     return true;
@@ -366,7 +366,7 @@ bool TestChannel::Write(const void *buf, PINDEX len) {
 }
 
 LocalConnection::LocalConnection(
-        OpalCall &call, LocalEndPoint &ep, void *userData, 
+        OpalCall &call, LocalEndPoint &ep, void *userData,
         unsigned opts, OpalConnection::StringOptions *stropts)
     : OpalLocalConnection(call, ep, userData, opts, stropts) {
         std::cout << __func__ << std::endl;
@@ -386,11 +386,11 @@ OpalMediaStream *LocalConnection::CreateMediaStream(
     PIndirectChannel *chan = NULL;
 
     //create the appropriate channel
-    chan = isSource ? 
+    chan = isSource ?
          new TestChannel(*this, TPState::Instance().GetPlayBackAudio()) :
          new TestChannel(*this, TPState::Instance().GetRecordAudio());
 
-    OpalMediaStream *s = new RawMediaStream(*this, mediaFormat, sessionID, 
+    OpalMediaStream *s = new RawMediaStream(*this, mediaFormat, sessionID,
             isSource, chan, false);
 
     return s;
@@ -426,10 +426,9 @@ bool RawMediaStream::ReadData(BYTE *data, PINDEX size, PINDEX &length) {
     //return OpalRawMediaStream::ReadData(data, size, length);
 }
 
-bool RawMediaStream::WriteData(const BYTE *data, 
-        PINDEX length, PINDEX &written)
+bool RawMediaStream::WriteData(const BYTE *data, PINDEX length, PINDEX &written)
 {
-//    cout << __func__ << endl;
+    written = 0;
     if (!isOpen) {
         cout << "channel not open!" << endl;
         return false;
@@ -439,7 +438,7 @@ bool RawMediaStream::WriteData(const BYTE *data,
         cout << "tried to write to a source stream!" << endl;
         return false;
     }
-    
+
     if (m_channel == NULL) {
         cout << "no channel!" << endl;
         return false;
@@ -449,7 +448,6 @@ bool RawMediaStream::WriteData(const BYTE *data,
         if (!m_channel->Write(data, length)) {
             cout << "data write failed!" << endl;
             return false;
-            CollectAverage(data, written);
         }
     } else {
         PBYTEArray silence(defaultDataSize);
@@ -457,10 +455,9 @@ bool RawMediaStream::WriteData(const BYTE *data,
             cout << "silence write failed!" << endl;
             return false;
         }
+        written = m_channel->GetLastWriteCount();
         CollectAverage(silence, written);
     }
-    written = m_channel->GetLastWriteCount();
-    // cout << "wrote " << written << endl;
     return true;
     //return OpalRawMediaStream::WriteData(data, length, written);
 }
