@@ -10,20 +10,20 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
  */
 
 #ifndef CALLSIGN_SIPPHONE_INCLUDES
 #define CALLSIGN_SIPPHONE_INCLUDES
-#include <ptlib.h>
-#include <sip/sip.h>
 #include <h323/h323.h>
 #include <opal/localep.h>
+#include <ptlib.h>
+#include <sip/sip.h>
 
 #ifdef DEBUG
 #define debug cout
@@ -31,4 +31,3 @@
 #define debug 0 && cout
 #endif
 #endif
-

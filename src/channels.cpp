@@ -23,76 +23,70 @@
 #include <ptclib/memfile.h>
 #include <ptclib/pwavfile.h>
 #include <ptclib/random.h>
-#include <ptlib/file.h>
 #include "channels.h"
 #include "main.h"
 #include "state.h"
 
 bool TestChanAudio::PlaybackAudio(const bool raw_rtp) {
-
     std::cout << __func__ << std::endl;
 
-    //start playback
+    // start playback
     playback = true;
 
     if (!raw_rtp) {
-      sync.Signal();
-      playsync.Wait();
-      cout << "TestChanAudio::PlaybackAudio: play back done "
-        << playback << endl;
+        sync.Signal();
+        playsync.Wait();
+        cout << "TestChanAudio::PlaybackAudio: play back done " << playback << endl;
 
-      // check if playback ok
-      bool playbackfailed = !playback;
-      playback = false;
-      return !playbackfailed;
+        // check if playback ok
+        bool playbackfailed = !playback;
+        playback = false;
+        return !playbackfailed;
     }
 
     Manager *m = TPState::Instance().GetManager();
     // write directly to rtp stream.
-    //size_t recordbytes = recordmillisec * BYTES_PER_MILLIS;
+    // size_t recordbytes = recordmillisec * BYTES_PER_MILLIS;
 
     PAdaptiveDelay delay;
     int i = 0;
 
     unsigned timestamp = PRandom::Number();
 
-    while(true) {
-      RTP_DataFrame *frame = new RTP_DataFrame();
-      frame->SetPayloadSize(640);
-      timestamp += m->CalculateTimestamp(640);
-      frame->SetTimestamp(timestamp);
-      //frame->SetTimestamp(m->CalculateTimestamp(1));
-      if (!playfile->Read(frame->GetPayloadPtr(), frame->GetPayloadSize())) {
+    while (true) {
+        RTP_DataFrame *frame = new RTP_DataFrame();
+        frame->SetPayloadSize(640);
+        timestamp += m->CalculateTimestamp(640);
+        frame->SetTimestamp(timestamp);
+        // frame->SetTimestamp(m->CalculateTimestamp(1));
+        if (!playfile->Read(frame->GetPayloadPtr(), frame->GetPayloadSize())) {
+            delete frame;
+            break;
+        }
+        if (!m->WriteFrame(*frame)) {
+            std::cerr << "RTP write failed" << std::endl;
+            break;
+        }
+        i++;
         delete frame;
-        break;
-      }
-      if (!m->WriteFrame(*frame)) {
-        std::cerr << "RTP write failed" << std::endl;
-        break;
-      }
-      i++;
-      delete frame;
-      //delay.Delay(20);
+        // delay.Delay(20);
     }
-    cout << "TestChanAudio::PlaybackAudio: play back done "
-         << playback << endl
+    cout << "TestChanAudio::PlaybackAudio: play back done " << playback << endl
          << "wrote " << i * 640 << " bytes " << endl;
     playback = false;
     return true;
 }
 
-
 void TestChanAudio::StopAudioPlayback(bool ioerror) {
-
     std::cout << __func__ << std::endl;
 
-    if(playfile) {
+    if (playfile) {
         PFile *ftemp = playfile;
         playfile = NULL;
         ftemp->Close();
         delete ftemp;
 
-        if(playback) {
+        if (playback) {
             playback = !ioerror;
             playsync.Signal();
         }
@@ -100,15 +94,14 @@ void TestChanAudio::StopAudioPlayback(bool ioerror) {
 }
 
 void TestChanAudio::StopAudioRecording(bool ioerror) {
-
     std::cout << __func__ << std::endl;
-    if(recfile) {
+    if (recfile) {
         PFile *ftemp = recfile;
         recfile = NULL;
         ftemp->Close();
         delete ftemp;
 
-        if(record) {
+        if (record) {
             record = !ioerror;
             recsync.Signal();
         }
@@ -116,12 +109,10 @@ void TestChanAudio::StopAudioRecording(bool ioerror) {
 }
 
 bool TestChanAudio::PlaybackAudioBuffer(PBYTEArray &buffer) {
-
-    //std::cout << __func__ << std::endl;
+    // std::cout << __func__ << std::endl;
     sync.Wait();
-    if(TPState::Instance().GetState() != TPState::ESTABLISHED) {
-        cout << __func__ << ": state "
-            << TPState::Instance().GetState() << endl;
+    if (TPState::Instance().GetState() != TPState::ESTABLISHED) {
+        cout << __func__ << ": state " << TPState::Instance().GetState() << endl;
         sync.Signal();
         return true;
     }
@@ -129,12 +120,11 @@ bool TestChanAudio::PlaybackAudioBuffer(PBYTEArray &buffer) {
     // open file
     assert(!playfile);
     playfile = new PMemoryFile(buffer);
-    cout << __func__ << ": starting playback of "
-        << playfile->GetLength() << " bytes" << endl;
+    cout << __func__ << ": starting playback of " << playfile->GetLength() << " bytes" << endl;
 
-    if(!playfile->SetPosition(0, PFile::Start)) {
+    if (!playfile->SetPosition(0, PFile::Start)) {
         cerr << __func__ << ": unable to set "
-            << "initial position to 0" << endl;
+             << "initial position to 0" << endl;
     }
 
     // start playback
@@ -144,29 +134,25 @@ bool TestChanAudio::PlaybackAudioBuffer(PBYTEArray &buffer) {
 bool TestChanAudio::PlaybackAudioFile(PString &filename) {
     std::cout << __func__ << std::endl;
     sync.Wait();
-    if(TPState::Instance().GetState() != TPState::ESTABLISHED) {
-        cout << __func__ << ": state "
-            << TPState::Instance().GetState() << endl;
+    if (TPState::Instance().GetState() != TPState::ESTABLISHED) {
+        cout << __func__ << ": state " << TPState::Instance().GetState() << endl;
         sync.Signal();
         return true;
     }
 
-    //open file
+    // open file
     assert(!playfile);
     PINDEX extind = filename.GetLength() - 4;
 
     // check if WAV file
-    if(extind >= 1  &&  filename.Mid(extind).ToLower() == ".wav") {
-        cout << __func__ << ": opening file \""
-            << filename << "\" as WAV" << endl;
+    if (extind >= 1 && filename.Mid(extind).ToLower() == ".wav") {
+        cout << __func__ << ": opening file \"" << filename << "\" as WAV" << endl;
 
-        playfile = new PWAVFile(
-                filename, PFile::ReadOnly, PFile::MustExist);
+        playfile = new PWAVFile(filename, PFile::ReadOnly, PFile::MustExist);
     }
     // raw data it is then
     else {
-        cout << __func__ << ": opening file \""
-            << filename << "\" as raw" << endl;
+        cout << __func__ << ": opening file \"" << filename << "\" as raw" << endl;
         playfile = new PFile(filename, PFile::ReadOnly, PFile::MustExist);
     }
 
@@ -174,32 +160,32 @@ bool TestChanAudio::PlaybackAudioFile(PString &filename) {
     return PlaybackAudio(TPState::Instance().GetProtocol() == TPState::RTP);
 }
 
-
 void TestChanAudio::FillPlaybackBuffer(char *buf, size_t len) {
-  //cout << "TestChanAudio::FillPlaybackBuffer: begin " << len << endl;
-  AutoSync a(sync);
-  size_t readcount = 0U;
+    // cout << "TestChanAudio::FillPlaybackBuffer: begin " << len << endl;
+    AutoSync a(sync);
+    size_t readcount = 0U;
 
-  if (playfile) {
-    bool ok = playfile->Read( buf, len);
+    if (playfile) {
+        bool ok = playfile->Read(buf, len);
 
-    // memoryfile returns ioerror when file ends...
-    ok |= playfile->GetPosition() == playfile->GetLength();
+        // memoryfile returns ioerror when file ends...
+        ok |= playfile->GetPosition() == playfile->GetLength();
 
-    if(ok)
-      readcount = playfile->GetLastReadCount();
-    else
-      cerr << "TestChanAudio::FillPlaybackBuffer: I/O error" << endl;
+        if (ok) {
+            readcount = playfile->GetLastReadCount();
+        } else {
+            cerr << "TestChanAudio::FillPlaybackBuffer: I/O error" << endl;
+        }
 
-    if (readcount < len) {
-      StopAudioPlayback( !ok);
+        if (readcount < len) {
+            StopAudioPlayback(!ok);
+        }
     }
-  }
-  if (readcount < len) {
-    memset(&buf[readcount], 0, len - readcount);
-  }
+    if (readcount < len) {
+        memset(&buf[readcount], 0, len - readcount);
+    }
 
-  //cout << "TestChanAudio::FillPlaybackBuffer: end " << readcount << endl;
+    // cout << "TestChanAudio::FillPlaybackBuffer: end " << readcount << endl;
 
     /*
     //cout << __func__ << " begin: " << len << std::endl;
@@ -234,11 +220,8 @@ void TestChanAudio::FillPlaybackBuffer(char *buf, size_t len) {
         */
 }
 
-
-bool TestChanAudio::RecordAudioFile(PString &filename,
-        bool append_file, bool stop_on_silence, int max_millisec) {
-
-    //std::cout << __func__ << std::endl;
+bool TestChanAudio::RecordAudioFile(PString &filename, bool append_file, bool stop_on_silence, int max_millisec) {
+    // std::cout << __func__ << std::endl;
     sync.Wait();
     /*
     if(TPState::Instance().GetState() != TPState::ESTABLISHED) {
@@ -252,29 +235,26 @@ bool TestChanAudio::RecordAudioFile(PString &filename,
     assert(!recfile);
     PINDEX extind = filename.GetLength() - 4;
     // check if WAV file
-    if(extind >= 1  &&  filename.Mid(extind).ToLower() == ".wav") {
-        cout << __func__ << ": opening file \""
-            << filename << "\" as WAV" << endl;
-        recfile = new PWAVFile(filename, PFile::ReadWrite,
-                append_file? PFile::Create: PFile::Create | PFile::Truncate);
+    if (extind >= 1 && filename.Mid(extind).ToLower() == ".wav") {
+        cout << __func__ << ": opening file \"" << filename << "\" as WAV" << endl;
+        recfile =
+            new PWAVFile(filename, PFile::ReadWrite, append_file ? PFile::Create : PFile::Create | PFile::Truncate);
     }
     // raw data it is then
     else {
-        cout << __func__ << ": opening file \""
-            << filename << "\" as raw" << endl;
-        recfile = new PFile(filename, PFile::ReadWrite,
-                append_file? PFile::Create: PFile::Create | PFile::Truncate);
+        cout << __func__ << ": opening file \"" << filename << "\" as raw" << endl;
+        recfile = new PFile(filename, PFile::ReadWrite, append_file ? PFile::Create : PFile::Create | PFile::Truncate);
     }
 
     // set append
-    if(append_file) {
+    if (append_file) {
         cerr << __func__ << ": appending to file" << endl;
         bool appok = recfile->SetPosition(0, PFile::End);
-        if(!appok  ||  !recfile->IsEndOfFile()) {
+        if (!appok || !recfile->IsEndOfFile()) {
             cerr << __func__ << ": setting file pointer"
-                << " to end of file failed" << std::endl;
+                 << " to end of file failed" << std::endl;
 
-                sync.Signal();
+            sync.Signal();
             return false;
         }
     }
@@ -294,60 +274,52 @@ bool TestChanAudio::RecordAudioFile(PString &filename,
     bool recordfailed = !record;
     record = false;
     return !recordfailed;
-
 }
 
-void TestChanAudio::RecordFromBuffer(
-    const char *buf, size_t len, bool currently_silent) {
+void TestChanAudio::RecordFromBuffer(const char *buf, size_t len, bool currently_silent) {
+    // cout << __func__ << ": begin " << len << endl;
+    AutoSync a(sync);
+    // silence detection
+    TPState::Instance().SetSilenceState(currently_silent, len);
+    size_t writecount = 0U;
 
-  //cout << __func__ << ": begin " << len << endl;
-  AutoSync a(sync);
-  // silence detection
-  TPState::Instance().SetSilenceState(currently_silent, len);
-  size_t writecount = 0U;
+    if (recfile) {
+        // check if silent
+        bool is_silent = TPState::Instance().IsSilent(RECORD_SILENCE_TIME_IN_MS * BYTES_PER_MILLIS);
+        size_t recordbytes = recordmillisec * BYTES_PER_MILLIS;
+        recordbytes = recordbytes > len ? len : recordbytes;
 
-  if(recfile) {
-    // check if silent
-    bool is_silent = TPState::Instance().IsSilent(
-        RECORD_SILENCE_TIME_IN_MS * BYTES_PER_MILLIS);
-    size_t recordbytes = recordmillisec * BYTES_PER_MILLIS;
-    recordbytes = recordbytes > len? len: recordbytes;
-
-    // stop on silence?
-    if(!stop_recording_when_silent  &&  is_silent) {
-      cout << __func__ << ": silence detected" << endl;
-      StopAudioRecording();
+        // stop on silence?
+        if (!stop_recording_when_silent && is_silent) {
+            cout << __func__ << ": silence detected" << endl;
+            StopAudioRecording();
+        } else {
+            bool ok = recfile->Write(buf, recordbytes);
+            if (ok) {
+                writecount = recfile->GetLastWriteCount();
+                recordmillisec -= writecount / BYTES_PER_MILLIS;
+            } else {
+                cerr << __func__ << ": I/O error" << endl;
+            }
+            if (writecount < len) {
+                StopAudioRecording(!ok);
+            }
+        }
     }
-    else {
-      bool ok = recfile->Write(buf, recordbytes);
-      if(ok) {
-          writecount = recfile->GetLastWriteCount();
-          recordmillisec -= writecount / BYTES_PER_MILLIS;
-      }
-      else {
-          cerr << __func__ << ": I/O error" << endl;
-      }
-      if(writecount < len)
-          StopAudioRecording(!ok);
-    }
-  }
 }
 
 bool TestChannel::Close() {
-    cout << __func__ << " [ " << this->connection
-	 << " - " << this <<  " ]" << endl;
+    cout << __func__ << " [ " << this->connection << " - " << this << " ]" << endl;
     audiohandle.CloseChannel();
     return true;
 }
 
-bool TestChannel::IsOpen() const {
-    return is_open;
-}
+bool TestChannel::IsOpen() const { return is_open; }
 
 // Read reads TO phone line
 bool TestChannel::Read(void *buf, PINDEX len) {
-    //std::cout << "TestChannel::Read" << std::endl;
-    audiohandle.FillPlaybackBuffer(reinterpret_cast< char *>(buf), len);
+    // std::cout << "TestChannel::Read" << std::endl;
+    audiohandle.FillPlaybackBuffer(reinterpret_cast<char *>(buf), len);
 
     lastReadCount = len;
     readDelay.Delay(len / BYTES_PER_MILLIS);
@@ -357,47 +329,38 @@ bool TestChannel::Read(void *buf, PINDEX len) {
 // Write writes FROM phone line
 bool TestChannel::Write(const void *buf, PINDEX len) {
     std::cout << "TestChannel::Write" << std::endl;
-    audiohandle.RecordFromBuffer(
-            reinterpret_cast< const char *>(buf), len, false);
-            //audiocodec.DetectSilence());
+    audiohandle.RecordFromBuffer(reinterpret_cast<const char *>(buf), len, false);
+    // audiocodec.DetectSilence());
     lastWriteCount = len;
     writeDelay.Delay(len / BYTES_PER_MILLIS);
     return true;
 }
 
-LocalConnection::LocalConnection(
-        OpalCall &call, LocalEndPoint &ep, void *userData,
-        unsigned opts, OpalConnection::StringOptions *stropts)
+LocalConnection::LocalConnection(OpalCall &call, LocalEndPoint &ep, void *userData, unsigned opts,
+                                 OpalConnection::StringOptions *stropts)
     : OpalLocalConnection(call, ep, userData, opts, stropts) {
-        std::cout << __func__ << std::endl;
-}
-
-LocalConnection::~LocalConnection() {
     std::cout << __func__ << std::endl;
 }
 
-OpalMediaStream *LocalConnection::CreateMediaStream(
-        const OpalMediaFormat & mediaFormat,
-        unsigned sessionID,
-        bool isSource) {
+LocalConnection::~LocalConnection() { std::cout << __func__ << std::endl; }
 
+OpalMediaStream *LocalConnection::CreateMediaStream(const OpalMediaFormat &mediaFormat, unsigned sessionID,
+                                                    bool isSource) {
     std::cout << __func__ << std::endl;
 
     PIndirectChannel *chan = NULL;
 
-    //create the appropriate channel
-    chan = isSource ?
-         new TestChannel(*this, TPState::Instance().GetPlayBackAudio()) :
-         new TestChannel(*this, TPState::Instance().GetRecordAudio());
+    // create the appropriate channel
+    chan = isSource ? new TestChannel(*this, TPState::Instance().GetPlayBackAudio())
+                    : new TestChannel(*this, TPState::Instance().GetRecordAudio());
 
-    OpalMediaStream *s = new RawMediaStream(*this, mediaFormat, sessionID,
-            isSource, chan, false);
+    OpalMediaStream *s = new RawMediaStream(*this, mediaFormat, sessionID, isSource, chan, false);
 
     return s;
 }
 
 bool RawMediaStream::ReadData(BYTE *data, PINDEX size, PINDEX &length) {
-    //cout << __func__ << endl;
+    // cout << __func__ << endl;
     length = 0;
     if (!isOpen) {
         cout << "channel not open!" << endl;
@@ -421,13 +384,12 @@ bool RawMediaStream::ReadData(BYTE *data, PINDEX size, PINDEX &length) {
 
     length = m_channel->GetLastReadCount();
     CollectAverage(data, length);
-    //cout << "read " << length << endl;
+    // cout << "read " << length << endl;
     return true;
-    //return OpalRawMediaStream::ReadData(data, size, length);
+    // return OpalRawMediaStream::ReadData(data, size, length);
 }
 
-bool RawMediaStream::WriteData(const BYTE *data, PINDEX length, PINDEX &written)
-{
+bool RawMediaStream::WriteData(const BYTE *data, PINDEX length, PINDEX &written) {
     written = 0;
     if (!isOpen) {
         cout << "channel not open!" << endl;
@@ -459,5 +421,5 @@ bool RawMediaStream::WriteData(const BYTE *data, PINDEX length, PINDEX &written)
         CollectAverage(silence, written);
     }
     return true;
-    //return OpalRawMediaStream::WriteData(data, length, written);
+    // return OpalRawMediaStream::WriteData(data, length, written);
 }
