@@ -277,6 +277,7 @@ bool Manager::Init(PArgList &args) {
     std::cout << __func__ << std::endl;
     // Parse various command line arguments
     args.Parse(
+        "a-alias:"
         "u-user:"
         "c-password:"
         "l-localaddress:"
