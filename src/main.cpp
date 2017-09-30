@@ -46,6 +46,8 @@ static void print_help() {
          << "-f <file>   --file <file>         the name of played sound file" << endl
          << "-g <addr>   --gatekeeper <addr>   gatekeeper to use" << endl
          << "-w <addr>   --gateway <addr>      gateway to use" << endl
+         << "-w <addr>   --gateway <addr>      gateway to use" << endl
+         << "-t <sec>    --timeout <sec>       dial timeout in seconds" << endl
          << endl;
 
     cerr << "The EBNF definition of the program syntax:" << endl
@@ -289,6 +291,7 @@ bool Manager::Init(PArgList &args) {
         "f-file:"
         "g-gatekeeper:"
         "w-gateway:"
+        "t-timeout:"
         "h-help:");
 
     if (args.HasOption('h')) {
@@ -310,6 +313,10 @@ bool Manager::Init(PArgList &args) {
 
     if (args.HasOption('l')) {
         TPState::Instance().SetLocalAddress(args.GetOptionString('l'));
+    }
+
+    if (args.HasOption('t')) {
+        TPState::Instance().SetDialTimeout(std::chrono::seconds(args.GetOptionString('t').AsInteger()));
     }
 
     string protocol = stringify(args.GetOptionString('P'));

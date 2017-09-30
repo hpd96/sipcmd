@@ -22,6 +22,7 @@
 #define STATE_H
 
 #include <string>
+#include <chrono>
 #include "channels.h"
 #include "main.h"
 
@@ -35,8 +36,6 @@
 #define WAIT_SILENCE_TIME_IN_MS 300U
 #define WAIT_ACTIVITY_TIME_IN_MS 100U
 #define RECORD_SILENCE_TIME_IN_MS 300U
-// global dailing timeout in seconds
-#define DIAL_TIMEOUT 10
 
 class TPState {
    private:
@@ -93,6 +92,7 @@ class TPState {
     void SetAliasName(const PString &alias) { aliasname = alias; }
     void SetGateKeeper(const PString &gk) { gatekeeper = gk; }
     void SetListenPort(const int portnum) { listenport = portnum; }
+    void SetDialTimeout(const std::chrono::seconds timeout) { dialTimeout = std::chrono::seconds(timeout); }
     // void SetConnection( H323Connection *conn) { connection = conn; }
     void SetToken(const PString &calltoken) { token = calltoken; }
     void SetManager(Manager *m) { manager = m; }
@@ -120,6 +120,7 @@ class TPState {
     // H323Connection *GetConnection( void) { return connection; }
     const PString &GetToken(void) { return token; }
     Manager *GetManager(void) { return manager; }
+    const std::chrono::seconds GetDialTimeout(void) { return dialTimeout; }
 
     TestChanAudio &GetPlayBackAudio() { return playbackaudio; }
 
@@ -149,6 +150,7 @@ class TPState {
     PString aliasname;
     PString gatekeeper;
     int listenport;
+    std::chrono::seconds dialTimeout;
     // H323Connection *connection;
     PString token;
     Manager *manager;
@@ -170,6 +172,7 @@ class TPState {
           aliasname(),
           gatekeeper(),
           listenport(5060),
+          dialTimeout(std::chrono::seconds(10)),
           token(),
           manager(NULL),
           playbackaudio(),

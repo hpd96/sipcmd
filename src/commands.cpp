@@ -168,7 +168,7 @@ bool Call::RunCommand(const std::string &loopsuffix) {
         if (state == TPState::TERMINATED) {
             errorstring = "Call: application terminated";
             return false;
-        } else if (difftime(time(NULL), secsnow) > DIAL_TIMEOUT) {
+        } else if (difftime(time(NULL), secsnow) > tpstate.GetDialTimeout().count()) {
             errorstring = "Call: Dial timed out";
             return false;
         }

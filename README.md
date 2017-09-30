@@ -1,14 +1,14 @@
 # sipcmd
 #### A command line SIP/H.323/RTP softphone
-  
-This repo is a fork of [tmakkonen/sipcmd]()https://github.com/tmakkonen/sipcmd 
+
+This repo is a fork of [tmakkonen/sipcmd]()https://github.com/tmakkonen/sipcmd
 
 To see what changed from the original repo, please refer to [CHANGELOG.md](CHANGELOG.md).
 
 ## Description
 
-`sipcmd` is a command line softphone that can originate and accept phone calls, enter DTMF digits and record and play back WAV files.  
-It is meant primarily as testing tool for VoIP systems, it only runs on Linux, and it is in no way stable or production ready.  
+`sipcmd` is a command line softphone that can originate and accept phone calls, enter DTMF digits and record and play back WAV files.
+It is meant primarily as testing tool for VoIP systems, it only runs on Linux, and it is in no way stable or production ready.
 
 ## Requirements
 
@@ -21,7 +21,7 @@ The build system relies on CMake.
 On a typical Ubuntu environment, you can build and install doing the following:
 
 ```shell
-apt-get install -y git cmake libopal-dev 
+apt-get install -y git cmake libopal-dev
 git clone https://github.com/stefanotorresi/sipcmd
 mkdir -p sipcmd/build
 cd sipcmd/build
@@ -30,7 +30,7 @@ make -j
 sudo make install
 ```
 
-This will install the binary on `/usr/local/bin/sipcmd`.  
+This will install the binary on `/usr/local/bin/sipcmd`.
 
 ## Usage
 
@@ -50,19 +50,20 @@ These are the command line options:
 -f --file           <file>  the name of played sound file
 -g --gatekeeper     <addr>  gatekeeper to use
 -w --gateway        <addr>  gateway to use
+-t --timeout        <sec>   dial timeout in seconds
 ```
 
 **Caveats:**
-  
-`-l` or `-p` without `-x` assume answer mode. Additional `-r` forces caller id checking. `-r` without `-l`, `-p` or `-x` assumes call mode.  
+
+`-l` or `-p` without `-x` assume answer mode. Additional `-r` forces caller id checking. `-r` without `-l`, `-p` or `-x` assumes call mode.
 To register to a gateway, specify `-c`, `-g` and `-w`
-  
+
 **Example:**
 
 `sipcmd -P sip -u johndoe -c secret -w example.com -x "c555123456;w200;d12345"`
 
 **WAV file requirements:**
-  
+
 *   mono
 *   8 kHz sampling rate
 *   16 bits sample size
@@ -88,9 +89,9 @@ setlabel :=  'l' label
 loop	 :=  'j' [ how-many-times ] [ 'l' label ]
 ```
 
-**Example:**  
+**Example:**
 
-`"l4;c333;ws3000;d123;w200;lthrice;ws1000;vaudio;rsi4000f.out;j3lthrice;h;j4"`  
+`"l4;c333;ws3000;d123;w200;lthrice;ws1000;vaudio;rsi4000f.out;j3lthrice;h;j4"`
 
 Parses to the following:
 
