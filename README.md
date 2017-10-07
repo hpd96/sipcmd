@@ -22,7 +22,7 @@ On a typical Ubuntu environment, you can build and install doing the following:
 
 ```shell
 apt-get install -y git cmake libopal-dev
-git clone https://github.com/stefanotorresi/sipcmd
+git clone https://github.com/palortoff/sipcmd
 mkdir -p sipcmd/build
 cd sipcmd/build
 cmake ..
