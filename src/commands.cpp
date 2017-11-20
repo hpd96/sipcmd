@@ -69,6 +69,7 @@ bool Command::Parse(const char *cmds, std::vector<Command *> &sequence) {
         ptr++;
         if (newcmd) {
             if (!newcmd->ParseCommand(&ptr, sequence)) {
+                delete(newcmd);
                 return false;
             }
         }
