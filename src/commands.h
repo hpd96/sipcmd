@@ -146,7 +146,10 @@ class Label : public Command {
 
    public:
     bool ParseCommand(const char **cmds, std::vector<Command *> &sequence);
-    bool RunCommand(const std::string &loopsuffix = "") { return true; }
+    bool RunCommand(const std::string &loopsuffix = "") {
+        (void) loopsuffix;
+        return true;
+    }
     const PString &GetLabel() const { return label; }
 };
 

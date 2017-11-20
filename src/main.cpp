@@ -191,6 +191,7 @@ LocalEndPoint::LocalEndPoint(Manager &m) : OpalLocalEndPoint(m), m_manager(m) {
 
 PSafePtr<OpalConnection> LocalEndPoint::MakeConnection(OpalCall &call, const PString &remoteParty, void *userData,
                                                        unsigned int options, OpalConnection::StringOptions *opts) {
+    (void) remoteParty;
     std::cout << "LocalEndpoint::" << __func__ << std::endl;
     return AddConnection(CreateConnection(call, userData, options, opts));
     // return OpalLocalEndPoint::MakeConnection(call, remoteParty, userData, options, opts);
@@ -206,6 +207,10 @@ OpalLocalConnection *LocalEndPoint::CreateConnection(OpalCall &call, void *userD
 // callback to hande data to be sent.
 bool LocalEndPoint::OnReadMediaData(const OpalLocalConnection &connection, const OpalMediaStream &mediaStream,
                                     void *data, PINDEX size, PINDEX &length) {
+    (void) connection;
+    (void) mediaStream;
+    (void) data;
+    (void) length;
     std::cout << __func__ << " datalen=" << size << std::endl;
     return true;
 
@@ -216,6 +221,11 @@ bool LocalEndPoint::OnReadMediaData(const OpalLocalConnection &connection, const
 // callback to handle received data.
 bool LocalEndPoint::OnWriteMediaData(const OpalLocalConnection &connection, const OpalMediaStream &mediaStream,
                                      const void *data, PINDEX length, PINDEX &written) {
+    (void) connection;
+    (void) mediaStream;
+    (void) data;
+    (void) length;
+    (void) written;
     std::cout << __func__ << std::endl;
     return true;
     // return const_cast<OpalMediaStream*>(&mediaStream)->WriteData(
@@ -588,7 +598,10 @@ bool Manager::OnOpenMediaStream(OpalConnection &connection, OpalMediaStream &str
     return true;
 }
 
-void RTPUserData::OnTxStatistics(const RTP_Session &session) const { cout << __func__ << endl; }
+void RTPUserData::OnTxStatistics(const RTP_Session &session) const {
+    (void) session;
+    cout << __func__ << endl;
+}
 
 OpalConnection::AnswerCallResponse Manager::OnAnswerCall(OpalConnection &connection, const PString &caller) {
     std::cout << "Incoming call from " << caller << std::endl;
@@ -597,7 +610,10 @@ OpalConnection::AnswerCallResponse Manager::OnAnswerCall(OpalConnection &connect
     return OpalConnection::AnswerCallNow;
 }
 
-void Manager::OnClosedMediaStream(const OpalMediaStream &stream) { std::cout << __func__ << std::endl; }
+void Manager::OnClosedMediaStream(const OpalMediaStream &stream) {
+    (void) stream;
+    std::cout << __func__ << std::endl;
+}
 
 bool Manager::OnIncomingConnection(OpalConnection &connection, unsigned opts, OpalConnection::StringOptions *stropts) {
     std::cout << __func__ << ": token=" << connection.GetToken() << std::endl;
@@ -632,4 +648,7 @@ void Manager::OnReleased(OpalConnection &connection) {
     OpalManager::OnReleased(connection);
 }
 
-void Manager::OnClearedCall(OpalCall &call) { std::cout << __func__ << std::endl; }
+void Manager::OnClearedCall(OpalCall &call) {
+    (void) call;
+    std::cout << __func__ << std::endl;
+}

@@ -114,6 +114,7 @@ bool Call::ParseCommand(const char **cmds, std::vector<Command *> &sequence) {
 }
 
 bool Call::RunCommand(const std::string &loopsuffix) {
+    (void) loopsuffix;
     std::cout << "## Call ##" << std::endl;
     // set up
     PString token;
@@ -204,6 +205,7 @@ bool Answer::ParseCommand(const char **cmds, std::vector<Command *> &sequence) {
 }
 
 bool Answer::RunCommand(const std::string &loopsuffix) {
+    (void) loopsuffix;
     std::cout << "## Answer ##" << std::endl;
     char buf[256];
     time_t secsnow = time(NULL);
@@ -246,6 +248,7 @@ bool Hangup::ParseCommand(const char **cmds, std::vector<Command *> &sequence) {
 }
 
 bool Hangup::RunCommand(const std::string &loopsuffix) {
+    (void) loopsuffix;
     std::cout << "## Hangup ##" << std::endl;
     char buf[256];
     time_t secsnow = time(NULL);
@@ -276,6 +279,7 @@ bool DTMF::ParseCommand(const char **cmds, std::vector<Command *> &sequence) {
 }
 
 bool DTMF::RunCommand(const std::string &loopsuffix) {
+    (void) loopsuffix;
     cout << "## DTMF \"" << digits << "\" ##" << endl;
     return TPState::Instance().GetManager()->SendDTMF(digits);
 }
@@ -298,6 +302,7 @@ bool Voice::ParseCommand(const char **cmds, std::vector<Command *> &sequence) {
 }
 
 bool Voice::RunCommand(const std::string &loopsuffix) {
+    (void) loopsuffix;
     std::cout << "## Voice audiofile=" << audiofilename << " ##" << std::endl;
 
     // playback audio
@@ -424,6 +429,7 @@ bool Wait::ParseCommand(const char **cmds, std::vector<Command *> &sequence) {
 }
 
 bool Wait::RunCommand(const std::string &loopsuffix) {
+    (void) loopsuffix;
     cout << "## Wait: waiting for " << millis << "ms ##" << endl;
     for (int n = millis / WAIT_SLEEP_ACCURACY; n >= 0; n--) {
         // silence detection
