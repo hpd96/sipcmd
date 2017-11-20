@@ -168,7 +168,9 @@ void initSignalHandling() {
     sigaction(SIGTERM, &sa, NULL);
 }
 
-TestProcess::TestProcess() : PProcess("Command line VoIP testphone", "sipcmd") {}
+TestProcess::TestProcess() : PProcess("Command line VoIP testphone", "sipcmd") {
+    manager = NULL;
+}
 
 void TestProcess::Main() {
     std::cout << "Starting sipcmd" << std::endl;
@@ -223,6 +225,7 @@ bool LocalEndPoint::OnWriteMediaData(const OpalLocalConnection &connection, cons
 Manager::Manager()
     : localep(NULL), sipep(NULL), h323ep(NULL), listenmode(false), listenerup(false), pauseBeforeDialing(false) {
     std::cout << __func__ << std::endl;
+    m_rtpsession = NULL;
 }
 
 Manager::~Manager() {
