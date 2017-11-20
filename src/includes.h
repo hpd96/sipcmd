@@ -20,7 +20,10 @@
 
 #ifndef CALLSIGN_SIPPHONE_INCLUDES
 #define CALLSIGN_SIPPHONE_INCLUDES
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion-null"
 #include <h323/h323.h>
+#pragma GCC diagnostic pop
 #include <opal/localep.h>
 #include <ptlib.h>
 #include <sip/sip.h>
