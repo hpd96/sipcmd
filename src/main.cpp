@@ -561,10 +561,6 @@ bool Manager::StartListener() {
 
     OpalListenerUDP *siplistener = new OpalListenerUDP(*sipep, sipaddr, TPState::Instance().GetListenPort());
 
-    if (!siplistener) {
-        std::cerr << "SIP listener creation failed!" << std::endl;
-        return false;
-    }
     if (!sipep->StartListener(siplistener)) {
         std::cerr << "StartListener failed!" << std::endl;
         return false;
