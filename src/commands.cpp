@@ -346,7 +346,7 @@ bool Record::ParseCommand(const char **cmds, std::vector<Command *> &sequence) {
         errorstring = "Record: No digits or invalid digits specified";
         return false;
     }
-    sscanf(*cmds, "%u", &millis);
+    sscanf(*cmds, "%zu", &millis);
     *cmds = &((*cmds)[i]);
     // filename
     for (i = 0U; (*cmds)[i] && (*cmds)[i] != ';'; i++) {
@@ -416,7 +416,7 @@ bool Wait::ParseCommand(const char **cmds, std::vector<Command *> &sequence) {
         return false;
     }
 
-    sscanf(*cmds, "%u", &millis);
+    sscanf(*cmds, "%zu", &millis);
     *cmds = &((*cmds)[i]);
     sequence.push_back(this);
     return true;

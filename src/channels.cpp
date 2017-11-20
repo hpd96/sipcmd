@@ -220,7 +220,7 @@ void TestChanAudio::FillPlaybackBuffer(char *buf, size_t len) {
         */
 }
 
-bool TestChanAudio::RecordAudioFile(PString &filename, bool append_file, bool stop_on_silence, int max_millisec) {
+bool TestChanAudio::RecordAudioFile(PString &filename, bool append_file, bool stop_on_silence, size_t max_millisec) {
     // std::cout << __func__ << std::endl;
     sync.Wait();
     /*

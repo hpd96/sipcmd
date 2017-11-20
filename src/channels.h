@@ -66,7 +66,7 @@ class TestChanAudio {
     }
 
     // record
-    bool RecordAudioFile(PString &filename, bool append_file, bool stop_on_silence, int max_millis);
+    bool RecordAudioFile(PString &filename, bool append_file, bool stop_on_silence, size_t max_millis);
 
     void RecordFromBuffer(const char *buf, size_t len, bool currently_silent);
 

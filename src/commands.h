@@ -116,7 +116,7 @@ class Record : public Command {
     bool silence;
     bool iterationsuffix;
     PString audiofilename;
-    int millis;
+    size_t millis;
 
    public:
     bool ParseCommand(const char **cmds, std::vector<Command *> &sequence);
