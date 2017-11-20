@@ -110,13 +110,13 @@ class TPState {
         }
     }
 
-    const TPProtocol GetProtocol(void) { return protocol; }
+    TPProtocol GetProtocol(void) { return protocol; }
     const PString &GetGateway(void) { return gateway; }
     const PString &GetLocalAddress(void) { return localaddress; }
     const PString &GetUserName(void) { return username; }
     const PString &GetAliasName(void) { return aliasname; }
     const PString &GetGateKeeper(void) { return gatekeeper; }
-    const int GetListenPort(void) { return listenport; }
+    int GetListenPort(void) { return listenport; }
     // H323Connection *GetConnection( void) { return connection; }
     const PString &GetToken(void) { return token; }
     Manager *GetManager(void) { return manager; }
