@@ -78,7 +78,7 @@ class RTPUserData : public RTP_UserData {
    public:
     RTPUserData() : RTP_UserData() {}
 
-    virtual void OnTxStatistics(const RTP_Session &session);
+    virtual void OnTxStatistics(const RTP_Session &session) const;
 };
 
 class Manager : public OpalManager {

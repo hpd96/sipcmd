@@ -588,7 +588,7 @@ bool Manager::OnOpenMediaStream(OpalConnection &connection, OpalMediaStream &str
     return true;
 }
 
-void RTPUserData::OnTxStatistics(const RTP_Session &session) { cout << __func__ << endl; }
+void RTPUserData::OnTxStatistics(const RTP_Session &session) const { cout << __func__ << endl; }
 
 OpalConnection::AnswerCallResponse Manager::OnAnswerCall(OpalConnection &connection, const PString &caller) {
     std::cout << "Incoming call from " << caller << std::endl;
