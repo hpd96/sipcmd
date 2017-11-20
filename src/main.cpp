@@ -348,6 +348,7 @@ bool Manager::Init(PArgList &args) {
             // sipep->SetProxy(args.GetOptionString('w'));
 
             if (!StartListener()) {
+                delete(aor);
                 return false;
             }
 
