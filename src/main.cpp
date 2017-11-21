@@ -420,7 +420,7 @@ bool Manager::SendDTMF(const PString &dtmf) {
     PSafePtr<OpalConnection> connection = call->GetConnection(listenmode ? 0 : 1);
     if (connection) {
         size_t i = 0;
-        for (; i < dtmf.GetSize() - 1; i++) {
+        for (; (i + 1) < (size_t)dtmf.GetSize(); i++) {
             if (!connection->SendUserInputTone(dtmf[i], 0))
                 break;
             else {
@@ -433,7 +433,7 @@ bool Manager::SendDTMF(const PString &dtmf) {
                 nanosleep(&tp, 0);
             }
         }
-        ok = (i == dtmf.GetSize() - 1 ? true : false);
+        ok = ((i + 1) == (size_t)dtmf.GetSize() ? true : false);
     }
 
     if (!ok) std::cerr << "dtmf sending failed\n" << std::endl;
