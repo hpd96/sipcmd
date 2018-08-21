@@ -1,16 +1,13 @@
 FROM ubuntu
 
 RUN apt-get update && \
-    apt-get install -y cmake libopal-dev g++ && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends cmake make build-essential libopal-dev libpt-dev gcc g++
 
-COPY . /tmp/sipcmd
-WORKDIR /tmp/sipcmd
+COPY . /sipcmd
+WORKDIR /sipcmd
 
 RUN cmake . && \
     make && \
     make install
 
-ENTRYPOINT "/usr/local/bin/sipcmd"
-
-CMD [ 'sipcmd' ]
+ENTRYPOINT ["/usr/local/bin/sipcmd"]
